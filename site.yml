@@ -1,0 +1,78 @@
+---
+- hosts: teamcity
+  user: vagrant
+  sudo: yes
+  vars:
+    teamcity_user: teamcity
+    teamcity_user_home: "/home/{{teamcity_user}}"
+    install_dir: "{{teamcity_user_home}}"
+    install_path: "{{install_dir}}/TeamCityAgent"
+    data_path: "{{teamcity_user_home}}/TeamCityData"
+    teamcity_url: http://localhost:8111
+    teamcity_agent_name: linux agent
+
+  handlers:
+    - name: restart iptables
+      service: name=iptables state=restarted
+
+  tasks:
+
+    - name: Install libselinux-python
+      yum: name=libselinux-python state=present
+
+    - name: Copy the EPEL repository definition
+      copy: src=files/epel.repo dest=/etc/yum.repos.d/epel.repo
+
+    - name: Create the GPG key for EPEL
+      copy: src=files/RPM-GPG-KEY-EPEL-6 dest=/etc/pki/rpm-gpg
+
+    - name: install java 7
+      yum: pkg=java-1.7.0-openjdk state=present
+
+    - name: Install nodejs npm git python libxml2-devel
+      yum: pkg={{ item }} state=present
+      with_items:
+        - nodejs
+        - npm
+        - git
+        - python
+        - libxml2-devel
+        - unzip
+
+    - name: Install coffee-script node.js package globally.
+      npm: name=coffee-script global=yes
+
+    - name: Set up iptables rules
+      copy: src=files/iptables dest=/etc/sysconfig/iptables
+      notify: restart iptables
+
+    - name: create teamcity home
+      file: path={{item}} state=directory mode=0755
+      with_items:
+        - "{{teamcity_user_home}}"
+        - "{{install_path}}"
+        - "{{data_path}}"
+
+    - name: create teamcity_user group
+      group: name={{teamcity_user}} state=present system=yes
+
+    - name: create teamcity user
+      user: name={{teamcity_user}} group={{teamcity_user}} createhome=yes shell=/bin/false system=yes state=present
+
+    - name: unpack archive
+      unarchive: src=files/buildAgent.zip dest={{install_path}}
+
+    - name: copy teamcity agent
+      template: src=templates/buildAgent.dist.properties.j2 dest={{install_path}}/conf/buildAgent.properties
+
+    - name: set install directory owner
+      file: path={{install_path}} owner={{teamcity_user}} group={{teamcity_user}} recurse=yes state=directory
+
+    - name: set install directory owner
+      file: path={{install_path}}/bin/agent.sh mode=755
+
+    - name: copy teamcity startup script
+      template: src=templates/teamcity_agent_script.sh.j2 dest=/etc/init.d/teamcity-agent mode=755
+
+    - name: start teamcity now
+      service: name=teamcity-agent state=started enabled=yes

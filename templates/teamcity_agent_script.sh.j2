@@ -1,0 +1,28 @@
+#!/bin/bash
+#
+# chkconfig: 235 10 90
+# description: TeamCity startup script
+#
+
+TEAMCITY_USER={{teamcity_user}}
+TEAMCITY_DIR={{install_path}}
+TEAMCITY_SERVER=bin/agent.sh
+
+TEAMCITY_DATADIR="{{data_path}}"
+
+. /etc/rc.d/init.d/functions
+
+case "$1" in
+start)
+    sudo -u $TEAMCITY_USER -s -- sh -c "cd $TEAMCITY_DIR; TEAMCITY_DATA_PATH=$TEAMCITY_DATADIR $TEAMCITY_SERVER start"
+    ;;
+stop)
+    sudo -u $TEAMCITY_USER -s -- sh -c "cd $TEAMCITY_DIR; TEAMCITY_DATA_PATH=$TEAMCITY_DATADIR $TEAMCITY_SERVER stop"
+    ;;
+*)
+    echo "Usage: $0 {start|stop}"
+    exit 1
+    ;;
+esac
+
+exit 0
