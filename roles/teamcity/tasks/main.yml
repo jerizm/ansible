@@ -1,0 +1,31 @@
+---
+- name: create teamcity home
+  file: path={{item}} state=directory mode=0755
+  with_items:
+    - "{{teamcity_user_home}}"
+    - "{{install_path}}"
+    - "{{data_path}}"
+
+- name: create teamcity_user group
+  group: name={{teamcity_user}} state=present system=yes
+
+- name: create teamcity user
+  user: name={{teamcity_user}} group={{teamcity_user}} createhome=yes shell=/bin/false system=yes state=present
+
+- name: unpack archive
+  unarchive: src=buildAgent.zip dest={{install_path}}
+
+- name: copy teamcity agent
+  template: src=buildAgent.dist.properties.j2 dest={{install_path}}/conf/buildAgent.properties
+
+- name: set install directory owner
+  file: path={{install_path}} owner={{teamcity_user}} group={{teamcity_user}} recurse=yes state=directory
+
+- name: set install directory owner
+  file: path={{install_path}}/bin/agent.sh mode=755
+
+- name: copy teamcity startup script
+  template: src=teamcity_agent_script.sh.j2 dest=/etc/init.d/teamcity-agent mode=755
+
+- name: start teamcity now
+  service: name=teamcity-agent state=started enabled=yes

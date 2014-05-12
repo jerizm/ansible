@@ -1,0 +1,30 @@
+---
+- name: Install libselinux-python
+  yum: name=libselinux-python state=present
+
+- name: Copy the EPEL repository definition
+  copy: src=epel.repo dest=/etc/yum.repos.d/epel.repo
+
+- name: Create the GPG key for EPEL
+  copy: src=RPM-GPG-KEY-EPEL-6 dest=/etc/pki/rpm-gpg
+
+- name: install java 7
+  yum: pkg=java-1.7.0-openjdk state=present
+
+- name: Set up iptables rules
+  copy: src=iptables dest=/etc/sysconfig/iptables
+  notify: restart iptables
+
+- name: Install nodejs npm git python libxml2-devel
+  yum: pkg={{ item }} state=present
+  with_items:
+    - nodejs
+    - npm
+    - git
+    - python
+    - libxml2-devel
+    - unzip
+
+- name: Install coffee-script node.js package globally.
+  npm: name=coffee-script global=yes
+

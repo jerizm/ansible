@@ -12,11 +12,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Every Vagrant virtual environment requires a box to build off of.
   config.vm.box = "chef/centos-6.5"
 
-  config.vm.network "public_network", :bridge => 'en0: Wi-Fi (AirPort)'
+  config.vm.network "public_network", :bridge => 'en0'
 
   config.vm.provider "virtualbox" do |v|
-    v.memory = 1024
-    v.cpus = 4
+    v.memory = 2048
+    v.cpus = 2
   end
 
   # Disable automatic box update checking. If you disable this, then
@@ -32,6 +32,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
   # config.vm.network "private_network", ip: "192.168.33.10"
+
+  config.vm.network :forwarded_port, guest: 9090, host: 9090 # TeamCity
+  config.vm.network :forwarded_port, guest: 8080, host: 8080 # TeamCity
 
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
