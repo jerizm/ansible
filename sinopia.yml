@@ -1,7 +1,7 @@
 ---
-- hosts: teamcity
+- hosts: local
   user: teamcity
-  sudo: yes
+  sudo: no
   vars:
     sinopia_path: /appslocal/sinopia
     local_user: teamcity

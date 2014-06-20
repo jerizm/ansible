@@ -1,12 +1,12 @@
 ---
 - name: create {{sinopia_path}} folder
-  file: path={{sinopia_path}} state=directory
+  file: path={{sinopia_path}} state=directory recurse=true
 
 - name: Install sinopia package globally.
-  sudo: no
-  npm: name=sinopia global=yes prefix={{sinopia_path}}
+  npm: name=sinopia global=yes path={{sinopia_path}}
 
 - name: copy sinopia service init.d file
+  sudo: yes
   template: src=sinopia.j2 dest=/etc/init.d/sinopia mode=755
 
 - name: copy sinopia config.yaml
@@ -14,4 +14,5 @@
   notify: restart sinopia
 
 - name: start sinopia
+  sudo: yes
   service: name=sinopia state=started enabled=yes
