@@ -5,7 +5,7 @@
   vars:
     sinopia_path: /appslocal/sinopia
     local_user: teamcity
-    sinopia_port: 8080
+    sinopia_port: 4873
 
   roles:
     - sinopia

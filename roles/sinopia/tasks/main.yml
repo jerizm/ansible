@@ -4,7 +4,7 @@
 
 - name: Install sinopia package globally.
   sudo: no
-  npm: name=sinopia global=yes
+  npm: name=sinopia global=yes prefix={{sinopia_path}}
 
 - name: copy sinopia service init.d file
   template: src=sinopia.j2 dest=/etc/init.d/sinopia mode=755
