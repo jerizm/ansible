@@ -1,0 +1,11 @@
+---
+- hosts: teamcity
+  user: teamcity
+  sudo: yes
+  vars:
+    sinopia_path: /appslocal/sinopia
+    local_user: teamcity
+    sinopia_port: 8080
+
+  roles:
+    - sinopia

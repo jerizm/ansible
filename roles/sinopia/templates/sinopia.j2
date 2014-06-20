@@ -7,7 +7,7 @@
 # processname: sinopia
 # pidfile: {{sinopia_path }}/srv.pid
 # config: {{sinopia_path }}/config.yaml
-SINOPIA_BIN={{sinopia_path}}/node_modules/sinopia/bin/sinopia
+SINOPIA_BIN=/usr/bin/sinopia
 SINOPIA_USER={{ local_user }}
 SINOPIA_LOG={{sinopia_path}}/deamon.log
 SINOPIA_PIDFILE={{sinopia_path}}/srv.pid
@@ -28,13 +28,13 @@ start() {
           $ECHO_CMD -n "$prog is already running"
           failure
           $ECHO_CMD
-          return 1 
+          return 1
         else
           $RM_CMD -f $SINOPIA_PIDFILE
         fi
       fi
         $ECHO_CMD -n $"Starting $prog: "
-          $SU_CMD - $SINOPIA_USER -c "cd $EXEC_DIR ; nohup $SINOPIA_BIN >>$SINOPIA_LOG 2>&1 & echo \$! >$SINOPIA_PIDFILE"         
+          $SU_CMD - $SINOPIA_USER -c "cd $EXEC_DIR ; nohup $SINOPIA_BIN >>$SINOPIA_LOG 2>&1 & echo \$! >$SINOPIA_PIDFILE"
         return $?
 }
 

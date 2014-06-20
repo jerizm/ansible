@@ -1,4 +1,7 @@
 ---
+- name: create {{sinopia_path}} folder
+  file: path={{sinopia_path}} state=directory
+
 - name: Install sinopia package globally.
   sudo: no
   npm: name=sinopia global=yes
